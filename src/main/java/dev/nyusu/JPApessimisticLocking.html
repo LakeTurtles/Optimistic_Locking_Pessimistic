@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPA Pessimistic Locking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1em 0;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1em 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>JPA Pessimistic Locking</h1>
+    <p>Using pessimistic locking in Java Persistence API (JPA)</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Pessimistic Read Lock Example</h2>
+        <pre>
+                <code>
+EntityManager entityManager = // obtain EntityManager
+entityManager.getTransaction().begin();
+MyEntity entity = entityManager.find(MyEntity.class, entityId, LockModeType.PESSIMISTIC_READ);
+// Perform read operations on the entity
+entityManager.getTransaction().commit();
+                </code>
+            </pre>
+    </div>
+
+    <div class="card">
+        <h2>Pessimistic Write Lock Example</h2>
+        <pre>
+                <code>
+EntityManager entityManager = // obtain EntityManager
+entityManager.getTransaction().begin();
+MyEntity entity = entityManager.find(MyEntity.class, entityId, LockModeType.PESSIMISTIC_WRITE);
+// Perform write operations on the entity
+entityManager.getTransaction().commit();
+                </code>
+            </pre>
+    </div>
+
+    <div class="card">
+        <h2>Pessimistic Force Increment Lock Example</h2>
+        <pre>
+                <code>
+EntityManager entityManager = // obtain EntityManager
+EntityTransaction transaction = entityManager.getTransaction();
+transaction.begin();
+try {
+    MyEntity entity = entityManager.find(MyEntity.class, entityId, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
+    entity.setName("Updated Name");
+    transaction.commit();
+} catch (Exception e) {
+    if (transaction != null && transaction.isActive()) {
+        transaction.rollback();
+    }
+    e.printStackTrace();
+} finally {
+    if (entityManager != null && entityManager.isOpen()) {
+        entityManager.close();
+    }
+}
+                </code>
+            </pre>
+    </div>
+
+</div>
+
+<footer>
+    <p>&copy; 2024 JPA Pessimistic Locking</p>
+</footer>
+
+</body>
+</html>
